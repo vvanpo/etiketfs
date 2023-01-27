@@ -27,13 +27,14 @@ location—there are no directories and files do not have filenames.
 
 * *File*: A combination of content (a sequence of bytes) and metadata.
 
-* *Filesystem*: A collection of files, and the resources needed to persist them.
+* *Filesystem*: A collection of files, metadata, and the resources needed to
+  persist them.
 
   The filesystem presents an interface for browsing and filtering files by
-  metadata, and by content for file formats that lend itself to querying.
+  metadata, and by content for file formats that lend themselves to querying.
 
 * *Filter*: A predicate applied to the set of files in the filesystem to select
-  a subset.
+  a subset. Many filters can be composed in a single selection.
 
 * *Format*: A description of a file's content as belonging to group of
   consistently-structured files.
@@ -51,20 +52,45 @@ location—there are no directories and files do not have filenames.
   content is modified (which could mean it no longer satisfies its associated
   format's constraints), format re-indexing isn't guaranteed to be repeated
   immediately. If a format operation (like calculating a derived metadata value)
-  fails due to format mismatch, the format association will just be removed and
-  the file marked for re-indexing.
+  fails due to format mismatch, the format association will be removed and the
+  file marked for re-indexing.
 
-  It's possible for a file to have multiple formats, e.g. in cases where one
-  format is a superset of another.
+  It's possible for a file to have multiple formats, e.g. when one format is a
+  superset of another.
 
-* *Metadata*: File metadata describes, identifies, or groups files.
+* *Metadata*: File metadata describes and identifies the content of a file.
 
   Metadata that is considered to belong to the file is called "intrinsic"
-  metadata, and should consist of inherent attributes of the content that are
-  invariant across systems.
+  metadata, and should consist of inherent attributes of the file content that
+  are invariant across systems.
+
+  "Extrinsic" metadata is scoped to the filesystem itself, representing
+  something that is only useful within the context of the system and the other
+  files in it. For example a file could be given a unique label for ease of
+  filtering, assigned membership to one or more categories, or point to another
+  file to establish a more complex relationship.
 
   Moving a file into or out of a filesystem preserves intrinsic—but not
   extrinsic—metadata.
+
+  Both forms of metadata can include derived properties that are read-only.
+  Examples of derived intrinic properties could be the file length (the number
+  of bytes used by the file content), or any format-specific properties that are
+  calculated based on the content. Extrinsic derived properties could include
+  the timestamp when the file was added to the system, last modified or last
+  accessed, etc.
+
+  Metadata values are typed, using a handful of scalar data types. The type
+  determines the availability of filtering and sorting operations for a metadata
+  property. For example, a date-typed property might be filterable using date
+  ranges, and sortable in ascending or descending order. A string-typed property
+  might be filterable via a fuzzy string search, and sortable by relevance.
+
+  While derived properties can't be deleted, some filter operations can produce
+  derived properties that are nevertheless ephemeral, and exist only within the
+  scope of the selection wherein the filter is applied. Most content
+  searching/matching filter operations result in ephemeral properties that can
+  be composed with other filters.
 
 * *Storage*: The underlying interface responsible for file and metadata
   persistence.

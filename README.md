@@ -7,34 +7,31 @@ file format they wish to use, and these plugins are able to decipher which files
 they are responsible for and enumerate their queryable data. For example, a PDF
 plugin might be able to expose the title of each document that has one, and an
 MP3 plugin might be able to calculate the beats per minute for some songs. A
-filesystem user with format plugins installed can query their files by filetype
-and the attributes they expose.
+filesystem user with format plugins installed can query their files by format
+and the properties they expose.
 
 While metadata that is inherent to (and derived directly from) file contents is
-the purview of format plugins, the filesystem manages all other metadata, which
-it divides into two categories: intrinsic and extrinsic. Intrinsic metadata
-consists of inextricable descriptors that stay with the file as it's copied or
-transmitted; e.g. the date an article was published, the timestamp when a photo
-was taken, the name of a book's author, the hardware used to create a file, etc.
-Extrinsic metadata is for anything personal to the user and their system's usage
-of a file, which might include timestamps for when it was added to or modified
-within the filesystem, access control attributes, and tags for categorization.
+the purview of format plugins, the filesystem manages all other metadata. Users
+can categorize their files with labels, add or update descriptive fields, and
+describe relationships to other files. Users can compose filter and sort
+operations using this metadata to produce file selections for browsing.
 
 Unlike traditional filesystems, etiketfs does not include the concept of
-location—there are no directories and files do not have filenames.
+location—there are no directories and files do not have filenames. This presents
+an acute limitation in that it is not compatible with operating system
+filesystem APIs, meaning applications must be specifically designed to interface
+with etiketfs.
 
 ## Glossary
 
-* *File*: A combination of content (a sequence of bytes) and metadata.
+* *File*: A combination of content (a sequence of bytes) and intrinsic metadata.
 
 * *Filesystem*: A collection of files, metadata, and the resources needed to
-  persist them.
-
-  The filesystem presents an interface for browsing and filtering files by
-  metadata, and by content for file formats that lend themselves to querying.
+  persist them. The filesystem presents an interface for browsing and filtering
+  files by metadata.
 
 * *Filter*: A predicate applied to the set of files in the filesystem to select
-  a subset. Many filters can be composed in a single selection.
+  a subset. Multiple filters can be composed to generate a selection.
 
 * *Format*: A description of a file's content as belonging to group of
   consistently-structured files.
@@ -61,7 +58,7 @@ location—there are no directories and files do not have filenames.
 * *Metadata*: File metadata describes and identifies the content of a file.
 
   Metadata that is considered to belong to the file is called "intrinsic"
-  metadata, and should consist of inherent attributes of the file content that
+  metadata, and should consist of inherent properties of the file content that
   are invariant across systems.
 
   "Extrinsic" metadata is scoped to the filesystem itself, representing
@@ -75,10 +72,10 @@ location—there are no directories and files do not have filenames.
 
   Both forms of metadata can include derived properties that are read-only.
   Examples of derived intrinic properties could be the file length (the number
-  of bytes used by the file content), or any format-specific properties that are
-  calculated based on the content. Extrinsic derived properties could include
-  the timestamp when the file was added to the system, last modified or last
-  accessed, etc.
+  of bytes used by the file content), or any number of format-specific
+  properties that are calculated based on the content. Extrinsic derived
+  properties could include the timestamp when the file was added to the system,
+  last modified or last accessed, etc.
 
   Metadata values are typed, using a handful of scalar data types. The type
   determines the availability of filtering and sorting operations for a metadata

@@ -30,18 +30,23 @@ with etiketfs.
   persist them. The filesystem presents an interface for browsing and filtering
   files by metadata.
 
-* *Filter*: A predicate applied to the set of files in the filesystem to select
+* *Filter*: A predicate applied to the set of files in the filesystem to produce
   a subset. Multiple filters can be composed to generate a selection.
 
-* *Format*: A description of a file's content as belonging to group of
+  Filters operate on a selection of files and a metadata property common to all
+  files in the selection, using the values of the property to filter out some
+  files and produce a subselection. The first filter in a chain must operate on
+  the seletion of all files in the filesystem.
+
+* *Format*: A description of a file's content as belonging to a group of
   consistently-structured files.
 
   The filesystem is extended by a registry of format plugins, each of which
   describe and identify a particular format. Files in the filesystem can be
   filtered by the formats in the registry, but each format can also provide
-  derived metadata values and query operations. For example, some text document
-  formats might provide a `word count` metadata value, and the ability to search
-  for documents by substring match.
+  derived metadata values. For example, some text document formats might provide
+  a word count metadata property, and a text match property accepting a string
+  parameter.
 
   When a file is added to the filesystem, it is associated with the format that
   identifies it. If a file can't be identified by any of the formats in the
@@ -55,39 +60,33 @@ with etiketfs.
   It's possible for a file to have multiple formats, e.g. when one format is a
   superset of another.
 
-* *Metadata*: File metadata describes and identifies the content of a file.
+* *Metadata*: File metadata describes and identifies the content of a file. A
+  metadata property consists of an **identifier** and a **value**.
 
-  Metadata that is considered to belong to the file is called "intrinsic"
+  **Attributive** metadata consists of stateful properties that users can add,
+  remove, or modify.
+
+  **Derived** metadata consists of read-only properties calculated from the file
+  content, and any other arguments the property might take. The identifier of a
+  derived property consists of both name and arguments.
+
+  Metadata that is considered to belong to the file is called **intrinsic**
   metadata, and should consist of inherent properties of the file content that
   are invariant across systems.
 
-  "Extrinsic" metadata is scoped to the filesystem itself, representing
+  **Extrinsic** metadata is scoped to the filesystem itself, representing
   something that is only useful within the context of the system and the other
   files in it. For example a file could be given a unique label for ease of
   filtering, assigned membership to one or more categories, or point to another
-  file to establish a more complex relationship.
+  file to establish a relationship.
 
   Moving a file into or out of a filesystem preserves intrinsic—but not
   extrinsic—metadata.
 
-  Both forms of metadata can include derived properties that are read-only.
-  Examples of derived intrinic properties could be the file length (the number
-  of bytes used by the file content), or any number of format-specific
-  properties that are calculated based on the content. Extrinsic derived
-  properties could include the timestamp when the file was added to the system,
-  last modified or last accessed, etc.
-
   Metadata values are typed, using a handful of scalar data types. The type
   determines the availability of filtering and sorting operations for a metadata
   property. For example, a date-typed property might be filterable using date
-  ranges, and sortable in ascending or descending order. A string-typed property
-  might be filterable via a fuzzy string search, and sortable by relevance.
-
-  While derived properties can't be deleted, some filter operations can produce
-  derived properties that are nevertheless ephemeral, and exist only within the
-  scope of the selection wherein the filter is applied. Most content
-  searching/matching filter operations result in ephemeral properties that can
-  be composed with other filters.
+  ranges, and sortable in ascending or descending order.
 
 * *Selection*: A subset of files returned by the filesystem, for the purposes of
   browsing or file operations.
@@ -102,14 +101,7 @@ with etiketfs.
   common amongst all files in the current selection, and the type of that
   property. For example, if no filters are applied, one metadata property common
   to all files regardless of format is length in bytes, which is an integer
-  property and can be sorted in ascending or descending order (last-modified
-  date is another universal property that can be similarly sorted).
-
-  Some sorting operations are only available for properties of a specific type
-  when a specific filtering operation is applied. For example, if a fuzzy
-  string match is applied to all files with text-based formats, the selection
-  could then be sorted by match relevance. Multiple match operations could
-  result in a compound relevance sort operation.
+  property and can be sorted in ascending or descending order.
 
 * *Storage*: The underlying interface responsible for file and metadata
   persistence.

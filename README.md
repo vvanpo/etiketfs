@@ -27,16 +27,11 @@ with etiketfs.
 * *File*: A combination of content (a sequence of bytes) and intrinsic metadata.
 
 * *Filesystem*: A collection of files, metadata, and the resources needed to
-  persist them. The filesystem presents an interface for browsing, adding or
-  removing, and manipulating the extrinsic metadata of files.
+  persist them.
 
-* *Filter*: A predicate applied to the set of files in the filesystem to produce
-  a subset. Multiple filters can be composed to generate a selection.
-
-  Filters operate on a selection of files and a metadata property common to all
-  files in the selection, using the values of the property to filter out some
-  files and produce a subselection. The first filter in a chain must operate on
-  the seletion of all files in the filesystem.
+* *Filter*: An operation on a selection, via a predicate applied on a metadata
+  property common to them, producing a subselection. Filters are typed and can
+  only operate on properties of matching type.
 
 * *Format*: A description of a file's content as belonging to a group of
   consistently-structured files.
@@ -44,9 +39,7 @@ with etiketfs.
   The filesystem is extended by a registry of format plugins, each of which
   describe and identify a particular format. Files in the filesystem can be
   filtered by the formats in the registry, but each format can also provide
-  derived metadata values. For example, some text document formats might provide
-  a word count metadata property, and a text match property accepting a string
-  parameter.
+  derived metadata values.
 
   When a file is added to the filesystem, it is associated with the format that
   identifies it. If a file can't be identified by any of the formats in the
@@ -58,7 +51,8 @@ with etiketfs.
   file marked for re-indexing.
 
   It's possible for a file to have multiple formats, e.g. when one format is a
-  superset of another.
+  superset of another. When metadata name collisions occur, the order of the
+  format plugins in the registry is consulted to determine precedence.
 
 * *Metadata*: File metadata describes and identifies the content of a file. A
   metadata property consists of an **identifier** and a **value**.
@@ -70,28 +64,17 @@ with etiketfs.
   content, and any other arguments the property might take. The identifier of a
   derived property consists of both name and arguments.
 
+  Metadata values (and derived property arguments) are typed, using a handful of
+  scalar data types.
+
   Metadata that is considered to belong to the file is called **intrinsic**
   metadata, and should consist of inherent properties of the file content that
-  are invariant across systems.
-
-  **Extrinsic** metadata is scoped to the filesystem itself, representing
-  something that is only useful within the context of the system and the other
-  files in it. For example a file could be given a unique label for ease of
-  filtering, assigned membership to one or more categories, or point to another
-  file to establish a relationship.
-
-  Moving a file into or out of a filesystem preserves intrinsic—but not
-  extrinsic—metadata.
-
-  Metadata values are typed, using a handful of scalar data types. The type
-  determines the availability of filtering and sorting operations for a metadata
-  property. For example, a date-typed property might be filterable using date
-  ranges, and sortable in ascending or descending order.
+  are invariant across systems. **Extrinsic** metadata is scoped to the
+  filesystem itself, representing something that is only useful within the
+  context of the system and the other files in it. Moving a file into or out of
+  a filesystem preserves intrinsic—but not extrinsic—metadata.
 
 * *Selection*: An immutable unordered subset of files in the filesystem.
-  Selections are the result of a filter operation on another selection, with the
-  originating selection in a chain of filters being the complete set of files in
-  the filesystem.
 
   Selections are retrieved from the filesystem and filters via channels, which
   generate selections reactively. When there is a state change in the filesystem
@@ -99,8 +82,10 @@ with etiketfs.
   removed, a metadata property being filtered on changes in value so as to be
   excluded from the filter, etc.), an updated selection is sent to the channel.
 
-  A sort operation can be applied to a selection to return an ordered list of
-  files.
+* *Sort*: An operation applied to a selection, accepting a metadata property
+  common to files to return an ordered list of files. Similar to filters, sort
+  operations are typed and output is sent over a channel where filesystem state
+  change reactively triggers updates.
 
 * *Storage*: The underlying interface responsible for file and metadata
   persistence.

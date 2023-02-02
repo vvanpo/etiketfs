@@ -38,8 +38,8 @@ with etiketfs.
   have in common.
 
   Extrinsic metadata associations can be queried either by identifier (list all
-  files with property <name>) or selection (list all properties associated with
-  files in <selection>).
+  files with property \<name\>) or selection (list all properties associated
+  with files in \<selection\>).
 
 * *Filter*: An operation on a selection, via a predicate applied on a metadata
   property common to them, producing a subselection. Filters are typed and can

@@ -33,17 +33,27 @@ with etiketfs.
 * *Filesystem*: A collection of files, metadata, and the resources needed to
   persist them.
 
-  The filesystem provides a selection of all files to begin a filter chain. It
-  can also be asked which metadata properties the files in a given selection
-  have in common.
-
-  Extrinsic metadata associations can be queried either by identifier (list all
-  files with property \<name\>) or selection (list all properties associated
-  with files in \<selection\>).
+  The filesystem can be queried for:
+  * A selection of all files.
+  * To enumerate the metadata properties in common amongst the files in a
+    selection.
+  * Change notifications for metadata properties belonging to the files in a
+    selection. If the property is added, removed, or updated for a file in the
+    selection, a notification will be sent.
+  * Extrinsic metadata associations by identifier (i.e. list all files with
+    property \<name\>) or selection (list all properties associated with files
+    in \<selection\>).
 
 * *Filter*: An operation on a selection, via a predicate applied on a metadata
   property common to them, producing a subselection. Filters are typed and can
   only operate on properties of matching type.
+
+  Filters update reactively with filesystem state changes. This can be caused by
+  changes in the input selection (i.e. a file that is in the output selection is
+  removed from the input selection, or a file is added to the input selection
+  that would not be filtered out), or a change to the metadata values filtered
+  on (i.e. a file in the input selection that is filtered out updates to be
+  included, or a file that is include no longer should be).
 
 * *Format*: A description of a file's content as belonging to a group of
   consistently-structured files.
@@ -88,16 +98,9 @@ with etiketfs.
 
 * *Selection*: An immutable unordered subset of files in the filesystem.
 
-  Selections are retrieved from the filesystem and filters via channels, which
-  generate selections reactively. When there is a state change in the filesystem
-  that would alter the requested selection (e.g. a file in the selection is
-  removed, a metadata property being filtered on changes in value so as to be
-  excluded from the filter, etc.), an updated selection is sent to the channel.
-
 * *Sort*: An operation applied to a selection, accepting a metadata property
   common to files to return an ordered list of files. Similar to filters, sort
-  operations are typed and output is sent over a channel where filesystem state
-  change reactively triggers updates.
+  operations are typed and updated reactively.
 
 * *Storage*: The underlying interface responsible for file and metadata
   persistence.

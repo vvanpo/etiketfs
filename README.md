@@ -26,8 +26,20 @@ with etiketfs.
 
 * *File*: A combination of content (a sequence of bytes) and intrinsic metadata.
 
+  Files can enumerate all their intrinsic metadata property names. The file
+  format constrains which properties are available on the file, both attributive
+  (writeable) and derived.
+
 * *Filesystem*: A collection of files, metadata, and the resources needed to
   persist them.
+
+  The filesystem provides a selection of all files to begin a filter chain. It
+  can also be asked which metadata properties the files in a given selection
+  have in common.
+
+  Extrinsic metadata associations can be queried either by identifier (list all
+  files with property <name>) or selection (list all properties associated with
+  files in <selection>).
 
 * *Filter*: An operation on a selection, via a predicate applied on a metadata
   property common to them, producing a subselection. Filters are typed and can

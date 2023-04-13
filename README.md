@@ -24,29 +24,12 @@ with etiketfs.
 
 ## Glossary
 
-* *File*: A combination of content (a sequence of bytes) and intrinsic metadata.
+* *File*: A combination of content (a sequence of bytes) and metadata.
 
-  Files can enumerate all their intrinsic metadata property names. The file
-  format constrains which properties are available on the file, both attributive
-  (writeable) and derived.
+* *Filesystem*: A collection of files and the resources needed to persist them.
 
-* *Filesystem*: A collection of files, metadata, and the resources needed to
-  persist them.
-
-  The filesystem can be queried for:
-  * A selection of all files.
-  * To enumerate the metadata properties in common amongst the files in a
-    selection.
-  * Change notifications for metadata properties belonging to the files in a
-    selection. If the property is added, removed, or updated for a file in the
-    selection, a notification will be sent.
-  * Extrinsic metadata associations by identifier (i.e. list all files with
-    property \<name\>) or selection (list all properties associated with files
-    in \<selection\>).
-
-* *Filter*: An operation on a selection, via a predicate applied on a metadata
-  property common to them, producing a subselection. Filters are typed and can
-  only operate on properties of matching type.
+* *Filter*: An operation mapping a selection to a subselection, via a predicate
+  applied on metadata properties.
 
   Filters update reactively with filesystem state changes. This can be caused by
   changes in the input selection (i.e. a file that is in the output selection is
@@ -59,35 +42,23 @@ with etiketfs.
   consistently-structured files.
 
   The filesystem is extended by a registry of format plugins, each of which
-  describe and identify a particular format. Files in the filesystem can be
-  filtered by the formats in the registry, but each format can also provide
-  derived metadata values.
+  describe and identify a particular format. A format provides intrinsic
+  metadata properties for a file and is responsible for calculating derived
+  values.
 
-  When a file is added to the filesystem, it is associated with the format that
-  identifies it. If a file can't be identified by any of the formats in the
-  registry, it will be excluded from any format-specific filters. When the file
-  content is modified (which could mean it no longer satisfies its associated
-  format's constraints), format re-indexing isn't guaranteed to be repeated
-  immediately. If a format operation (like calculating a derived metadata value)
-  fails due to format mismatch, the format association will be removed and the
-  file marked for re-indexing.
+  When a file is added to the filesystem, it is associated with formats that
+  identify it. When file content is modified (which could mean it no longer
+  satisfies an associated format's constraints), format re-indexing isn't
+  guaranteed to be repeated immediately. If a format operation (like calculating
+  a derived metadata value) fails due to format mismatch, the format association
+  will be removed and the file marked for re-indexing.
 
-  It's possible for a file to have multiple formats, e.g. when one format is a
-  superset of another. When metadata name collisions occur, the order of the
-  format plugins in the registry is consulted to determine precedence.
+  To prevent collisions when a file is associated with more then one format,
+  metadata identifiers provided by formats are namespaced using the format name.
 
 * *Metadata*: File metadata describes and identifies the content of a file. A
-  metadata property consists of an **identifier** and a **value**.
-
-  **Attributive** metadata consists of stateful properties that users can add,
-  remove, or modify.
-
-  **Derived** metadata consists of read-only properties calculated from the file
-  content, and any other arguments the property might take. The identifier of a
-  derived property consists of both name and arguments.
-
-  Metadata values (and derived property arguments) are typed, using a handful of
-  scalar data types.
+  metadata **property** consists of an association between an **identifier** and
+  a file. A property can be dereferenced to produce a metadata **value**.
 
   Metadata that is considered to belong to the file is called **intrinsic**
   metadata, and should consist of inherent properties of the file content that
@@ -95,6 +66,17 @@ with etiketfs.
   filesystem itself, representing something that is only useful within the
   context of the system and the other files in it. Moving a file into or out of
   a filesystem preserves intrinsic—but not extrinsic—metadata.
+
+  **Attributive** metadata consists of stateful properties that users can add,
+  remove, or modify.
+
+  **Derived** metadata consists of read-only properties calculated from the file
+  content. Derived property identifiers can be grouped by name and a defined
+  parameter, where each argument produces a unique identifier. The argument
+  value is then used in derived property calculation.
+
+  Metadata values and derived property parameters are typed, using a handful of
+  scalar data types.
 
 * *Selection*: An immutable unordered subset of files in the filesystem.
 

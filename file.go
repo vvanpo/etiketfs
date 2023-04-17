@@ -8,6 +8,7 @@ type Content interface {
 
 // File ...
 type File struct {
+	id      string
 	content Content
 }
 

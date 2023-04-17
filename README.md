@@ -67,8 +67,8 @@ with etiketfs.
   context of the system and the other files in it. Moving a file into or out of
   a filesystem preserves intrinsic—but not extrinsic—metadata.
 
-  **Attributive** metadata consists of stateful properties that users can add,
-  remove, or modify.
+  **Attributive** metadata consists of stateful properties that can be added,
+  removed, or modified.
 
   **Derived** metadata consists of read-only properties calculated from the file
   content. Derived property identifiers can be grouped by name and a defined

@@ -1,21 +1,43 @@
 package main
 
-import "sort"
+import (
+	"golang.org/x/exp/maps"
+)
 
-func Sort(in <-chan []File, cmp func(i, j File) bool) <-chan []File {
+type Sorter struct {
+	i   PropertyIdentifier
+	cmp func(a, b PropertyValue) bool
+}
+
+func (s Sorter) Reverse() Sorter {
+	s.cmp = func(a, b PropertyValue) bool { return s.cmp(b, a) }
+
+	return s
+}
+
+func NewSorter(identifier PropertyIdentifier, comparator func(a, b PropertyValue) bool) Sorter {
+	return Sorter{identifier, comparator}
+}
+
+func Sort(in <-chan Selection, sorters ...Sorter) <-chan []File {
 	out := make(chan []File)
 
 	go func() {
-		for files := range in {
-			sort.Slice(files, func(i, j int) bool {
-				return cmp(files[i], files[j])
-			})
-
-			out <- files
+		for selection := range in {
+			out <- sortSelection(selection, sorters...)
 		}
-
-		close(out)
 	}()
 
 	return out
+}
+
+func sortSelection(selection Selection, sorters ...Sorter) []File {
+	files := maps.Values(selection.files)
+	properties := make(map[PropertyIdentifier][]PropertyValue)
+
+	for sorter := range sorters {
+	}
+
+	//
+	return files
 }

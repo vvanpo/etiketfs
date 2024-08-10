@@ -11,8 +11,7 @@ import (
 // can be ignorant of files and operate only on contents. Hash calculation is
 // the caller's responsibility, as is tracking what is being stored.
 //
-// Calling Read or Delete on a non-existent hash should panic, as should a Write
-// on a hash that is already present.
+// Calling Read on a non-existent hash should panic.
 type Storage interface {
 	sql.DB
 	Read(hash string) io.ReadSeeker

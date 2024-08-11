@@ -11,10 +11,10 @@ import (
 // can be ignorant of files and operate only on contents. Hash calculation is
 // the caller's responsibility, as is tracking what is being stored.
 //
-// Calling Read on a non-existent hash should panic.
+// Calling Open on a non-existent hash should panic.
 type Storage interface {
-	sql.DB
-	Read(hash string) io.ReadSeeker
+	DB() sql.DB
+	Open(hash string) io.ReadSeeker
 	Write(hash string, content io.Reader)
 	Delete(hash string)
 }

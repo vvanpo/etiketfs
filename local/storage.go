@@ -12,7 +12,7 @@ const dbFile = "etiketfs.db"
 // Storage ...
 type Storage struct {
 	path string
-	*sql.DB
+	db   *sql.DB
 }
 
 // Load ...
@@ -27,7 +27,7 @@ func Load(path string) (*Storage, error) {
 	return &Storage{path, db}, nil
 }
 
-func (s *Storage) Read(hash string) *os.File {
+func (s *Storage) Open(hash string) *os.File {
 	f, err := os.Open(s.filepath(hash))
 
 	if err != nil {

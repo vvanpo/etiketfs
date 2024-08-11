@@ -8,8 +8,14 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+func mkdirTemp() string {
+	tmpdir, _ := os.MkdirTemp("", "local-storage_test-")
+
+	return tmpdir
+}
+
 func TestNewExistingDir(t *testing.T) {
-	tmpdir, _ := os.MkdirTemp("", "local-new_test-")
+	tmpdir := mkdirTemp()
 	defer os.RemoveAll(tmpdir)
 
 	t.Logf("Created %s", tmpdir)
@@ -20,7 +26,7 @@ func TestNewExistingDir(t *testing.T) {
 }
 
 func TestNewNestedDir(t *testing.T) {
-	tmpdir, _ := os.MkdirTemp("", "local-new_test-")
+	tmpdir := mkdirTemp()
 	defer os.RemoveAll(tmpdir)
 
 	nesteddir := path.Join(tmpdir, "foo/bar")

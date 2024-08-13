@@ -31,27 +31,14 @@ with etiketfs.
 * *Filter*: An operation mapping a selection to a subselection, via a predicate
   applied on metadata properties.
 
-  Filters update reactively with filesystem state changes. This can be caused by
-  changes in the input selection (i.e. a file that is in the output selection is
-  removed from the input selection, or a file is added to the input selection
-  that would not be filtered out), or a change to the metadata values filtered
-  on (i.e. a file in the input selection that is filtered out updates to be
-  included, or a file that is include no longer should be).
-
 * *Format*: A description of a file's content as belonging to a group of
   consistently-structured files.
 
   The filesystem is extended by a registry of format plugins, each of which
   describe and identify a particular format. A format provides intrinsic
   metadata properties for a file and is responsible for calculating derived
-  values.
-
-  When a file is added to the filesystem, it is associated with formats that
-  identify it. When file content is modified (which could mean it no longer
-  satisfies an associated format's constraints), format re-indexing isn't
-  guaranteed to be repeated immediately. If a format operation (like calculating
-  a derived metadata value) fails due to format mismatch, the format association
-  will be removed and the file marked for re-indexing.
+  values. When a file is added to the filesystem, it is associated with formats
+  that identify it.
 
   To prevent collisions when a file is associated with more then one format,
   metadata identifiers provided by formats are namespaced using the format name.
@@ -81,8 +68,21 @@ with etiketfs.
 * *Selection*: An immutable unordered subset of files in the filesystem.
 
 * *Sort*: An operation applied to a selection, accepting a metadata property
-  common to files to return an ordered list of files. Similar to filters, sort
-  operations are typed and updated reactively.
+  common to files to return an ordered list of files.
 
 * *Storage*: The underlying interface responsible for file and metadata
   persistence.
+
+## To-dos
+
+* Reactive updates in the selection and sorted selection interfaces triggered by
+  state changes. This can be caused by changes in the input selection (i.e. a
+  file that is in the output selection is removed from the input selection, or a
+  file is added to the input selection that would not be filtered out), or a
+  change to the metadata values filtered on (i.e. a file in the input selection
+  that is filtered out updates to be included, or a file that is include no
+  longer should be).
+
+* Provide support for writing to open files. Format identification and property
+  parsing/calculation would need to be done lazily, as it is an I/O and
+  computationally expensive process.

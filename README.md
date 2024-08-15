@@ -10,7 +10,7 @@ MP3 plugin might be able to calculate the beats per minute for some songs. A
 filesystem user with format plugins installed can query their files by format
 and the properties they expose.
 
-While metadata that is inherent to (and derived directly from) file contents is
+While metadata that is inherent to (and derived directly from) file content is
 the purview of format plugins, the filesystem manages all other metadata. Users
 can categorize their files with labels, add or update descriptive fields, and
 describe relationships to other files. Users can compose filter and sort
@@ -54,21 +54,35 @@ with etiketfs.
   context of the system and the other files in it. Moving a file into or out of
   a filesystem preserves intrinsic—but not extrinsic—metadata.
 
-  **Attributive** metadata consists of stateful properties that can be added,
-  removed, or modified.
-
   **Derived** metadata consists of read-only properties calculated from the file
   content. Derived property identifiers can be grouped by name and a defined
-  parameter, where each argument produces a unique identifier. The argument
-  value is then used in derived property calculation.
+  parameter, where each argument value produces a unique identifier. The
+  argument value is then used in derived property calculation.
+
+  **Attributive** metadata consists of mutable properties that describe or
+  relate to the file but are otherwise orthogonal to its content; they are
+  managed by the filesystem and are not affected by changes to file content.
 
   Metadata values and derived property parameters are typed, using a handful of
-  scalar data types.
+  data types.
 
-* *Selection*: An immutable unordered subset of files in the filesystem.
+  Properties originate from a number of sources:
+  * The filesystem provides a number of universal properties, like the list of
+    identified formats, file size, and added/modified/accessed timestamps.
+  * Each format enumerates the set of derived properties it can calculate on
+    files.
+  * The user can create any number of attributive properties on a file.
+  * Format importers strip encoded attributive metadata (e.g. Exif) from the
+    file content as a file is added/written to, and set them as modifiable
+    attributes.
 
-* *Sort*: An operation applied to a selection, accepting a metadata property
-  common to files to return an ordered list of files.
+  Each property source scopes the property names they define, preventing
+  collisions.
+
+* *Selection*: An unordered subset of files in the filesystem.
+
+* *Sort*: A compare operation applied to a selection, accepting a metadata
+  property common to files to return an ordered list of subselections.
 
 * *Storage*: The underlying interface responsible for file and metadata
   persistence.

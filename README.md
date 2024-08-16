@@ -34,11 +34,11 @@ with etiketfs.
 * *Format*: A description of a file's content as belonging to a group of
   consistently-structured files.
 
-  The filesystem is extended by a registry of format plugins, each of which
-  describe and identify a particular format. A format provides intrinsic
-  metadata properties for a file and is responsible for calculating derived
-  values. When a file is added to the filesystem, it is associated with formats
-  that identify it.
+  The filesystem is extended by a set of format plugins, each of which describe
+  and identify a particular file format. A format plugin enumerates derived
+  metadata properties for a file and is responsible for parsing or calculating
+  their values. When a file is written to or added to the filesystem, it is
+  associated with formats that identify it.
 
   To prevent collisions when a file is associated with more then one format,
   metadata identifiers provided by formats are namespaced using the format name.
@@ -57,27 +57,32 @@ with etiketfs.
   **Derived** metadata consists of read-only properties calculated from the file
   content. Derived property identifiers can be grouped by name and a defined
   parameter, where each argument value produces a unique identifier. The
-  argument value is then used in derived property calculation.
+  argument value is then used in derived property calculation. Derived
+  properties are always intrinsic.
 
   **Attributive** metadata consists of mutable properties that describe or
-  relate to the file but are otherwise orthogonal to its content; they are
-  managed by the filesystem and are not affected by changes to file content.
+  relate to the file but are otherwise orthogonal to its content; they are not
+  affected by changes to file content.
 
-  Metadata values and derived property parameters are typed, using a handful of
-  data types.
+  The distinction between derived and attributive metadata breaks down when
+  considering in-band metadata container formats like Exif and ID3, as their
+  purpose is to persist intrinsic attributes as part of the file content.
+  Because they are part of the content, a format plugin corresponding to the
+  container format is responsible for extracting them as a derived property, and
+  they are not exposed as mutable attributes.
 
   Properties originate from a number of sources:
-  * The filesystem provides a number of universal properties, like the list of
-    identified formats, file size, and added/modified/accessed timestamps.
-  * Each format enumerates the set of derived properties it can calculate on
-    files.
-  * The user can create any number of attributive properties on a file.
-  * Format importers strip encoded attributive metadata (e.g. Exif) from the
-    file content as a file is added/written to, and set them as modifiable
-    attributes.
+  * The filesystem provides a number of universal properties. Some are derived,
+    like the list of identified formats, file size, or a content hash, and some
+    are attributive, like added/modified/accessed timestamps.
+  * Each format enumerates the set of properties it can derive from a file.
+  * The user can define any number of extrinsic attributes.
 
   Each property source scopes the property names they define, preventing
   collisions.
+
+  Metadata values and derived property parameters are typed, using a handful of
+  data types.
 
 * *Selection*: An unordered subset of files in the filesystem.
 
@@ -94,9 +99,5 @@ with etiketfs.
   file that is in the output selection is removed from the input selection, or a
   file is added to the input selection that would not be filtered out), or a
   change to the metadata values filtered on (i.e. a file in the input selection
-  that is filtered out updates to be included, or a file that is include no
+  that is filtered out updates to be included, or a file that is included no
   longer should be).
-
-* Provide support for writing to open files. Format identification and property
-  parsing/calculation would need to be done lazily, as it is an I/O and
-  computationally expensive process.

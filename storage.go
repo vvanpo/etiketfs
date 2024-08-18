@@ -6,15 +6,9 @@ import (
 )
 
 // Storage provides persistence for the file server.
-//
-// Because the database keeps track of file identity, Storage implementations
-// can be ignorant of files and operate only on contents. Hash calculation is
-// the caller's responsibility, as is tracking what is being stored.
-//
-// Calling Open on a non-existent hash should panic.
 type Storage interface {
-	DB() sql.DB
-	Open(hash string) io.ReadSeeker
-	Write(hash string, content io.Reader)
-	Delete(hash string)
+	DB() (*sql.DB, error)
+	Open(id string) (io.ReadSeekCloser, error)
+	Add(id string, content io.Reader) error
+	Delete(id string) error
 }

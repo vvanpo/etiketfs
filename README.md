@@ -24,7 +24,7 @@ with etiketfs.
 
 ## Glossary
 
-* *File*: A combination of content (a sequence of bytes) and metadata.
+* *File*: A combination of **content** (a sequence of bytes) and **metadata**.
 
 * *Filesystem*: A collection of files and the resources needed to persist them.
 
@@ -55,31 +55,27 @@ with etiketfs.
   a filesystem preserves intrinsic—but not extrinsic—metadata.
 
   **Derived** metadata consists of read-only properties calculated from the file
-  content. Derived property identifiers can be grouped by name and a defined
-  parameter, where each argument value produces a unique identifier. The
-  argument value is then used in derived property calculation. Derived
-  properties are always intrinsic.
+  content, and are therefore intrinsic. Some derived properties may accept a
+  user-supplied argument, whose value is used in the property calculation.
+  Parameterized property identifiers are grouped by name and the defined
+  parameter, where each argument value produces a unique identifier.
 
-  **Attributive** metadata consists of mutable properties that describe or
-  relate to the file but are otherwise orthogonal to its content; they are not
-  affected by changes to file content.
-
-  The distinction between derived and attributive metadata breaks down when
-  considering in-band metadata container formats like Exif and ID3, as their
-  purpose is to persist intrinsic attributes as part of the file content.
-  Because they are part of the content, a format plugin corresponding to the
-  container format is responsible for extracting them as a derived property, and
-  they are not exposed as mutable attributes.
+  **Attributive** metadata consists of properties (attributes) that describe or
+  relate to the file but are otherwise orthogonal to its content; they are
+  "attributed" to the file content by someone or something. Extrinsic attributes
+  are stateful and managed by the filesystem, while intrinsic attributes are
+  exclusive to files that support an in-band metadata container format such as
+  Exif or ID3—intrinsic attributes are thus exposed via a corresponding format
+  plugin.
 
   Properties originate from a number of sources:
-  * The filesystem provides a number of universal properties. Some are derived,
-    like the list of identified formats, file size, or a content hash, and some
-    are attributive, like added/modified/accessed timestamps.
-  * Each format enumerates the set of properties it can derive from a file.
-  * The user can define any number of extrinsic attributes.
-
-  Each property source scopes the property names they define, preventing
-  collisions.
+  * Each format can expose a variable number of intrinsic properties for files
+    they identify.
+  * The filesystem implements a special `system` format which present some
+    universal read-only properties. Some are intrinsic, like the list of
+    identified formats, file size, and a content hash, and some are extrinsic
+    attributes, like added/modified/accessed timestamps.
+  * The user can define any number of mutable extrinsic attributes.
 
   Metadata values and derived property parameters are typed, using a handful of
   data types.
@@ -101,3 +97,6 @@ with etiketfs.
   change to the metadata values filtered on (i.e. a file in the input selection
   that is filtered out updates to be included, or a file that is included no
   longer should be).
+
+* Implement the ability to make intrinsic attributes modifiable through the
+  filesystem interface.

@@ -7,36 +7,35 @@ import (
 	"testing"
 )
 
-func TestWriteRead(t *testing.T) {
+func TestAddRead(t *testing.T) {
 	dir := mkdirTemp()
 	defer os.RemoveAll(dir)
 
 	New(dir)
-	s, _ := Load(dir)
+	s := Load(dir)
 
-	hash := "foo"
-	content := strings.NewReader("bar")
-	s.Write(hash, content)
+	id := "foo"
+	s.Add(id, strings.NewReader("bar"))
 
 	readContent := make([]byte, 3)
-	s.Open(hash).Read(readContent)
+	content, _ := s.Open(id)
+	content.Read(readContent)
 
 	if string(readContent) != "bar" {
 		t.Errorf("Failed read correct file contents")
 	}
 }
 
-func TestWriteDelete(t *testing.T) {
+func TestAddDelete(t *testing.T) {
 	dir := mkdirTemp()
 	defer os.RemoveAll(dir)
 
 	New(dir)
-	s, _ := Load(dir)
+	s := Load(dir)
 
-	hash := "foo"
-	content := strings.NewReader("bar")
-	s.Write(hash, content)
-	s.Delete(hash)
+	id := "foo"
+	s.Add(id, strings.NewReader("bar"))
+	s.Delete(id)
 
 	if _, err := os.Stat(path.Join(dir, "foo")); err == nil {
 		t.Error("File not deleted")

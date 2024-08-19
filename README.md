@@ -72,9 +72,9 @@ with etiketfs.
   * Each format can expose a variable number of intrinsic properties for files
     they identify.
   * The filesystem implements a special `system` format which present some
-    universal read-only properties. Some are intrinsic, like the list of
-    identified formats, file size, and a content hash, and some are extrinsic
-    attributes, like added/modified/accessed timestamps.
+    universal read-only properties. Some are intrinsic, like file size or a
+    content hash, and some are extrinsic, like added/modified/accessed
+    timestamps.
   * The user can define any number of mutable extrinsic attributes.
 
   Metadata values and derived property parameters are typed, using a handful of

@@ -24,7 +24,7 @@ func Load(path string) *Storage {
 }
 
 func (s *Storage) DB() (*sql.DB, error) {
-	return sql.Open("sqlite3", s.absPath(dbFile))
+	return sql.Open("sqlite3", "file:"+s.absPath(dbFile)+"?_fk=true")
 }
 
 func (s *Storage) Open(id string) (*os.File, error) {

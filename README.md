@@ -43,6 +43,12 @@ with etiketfs.
   To prevent collisions when a file is associated with more then one format,
   metadata identifiers provided by formats are namespaced using the format name.
 
+  A format can be a superset of another, as in cases where one format is
+  backwards-compatible with another (e.g. UTF-8 and ASCII, YAML and JSON).
+  Formats that extend another only have their identifying function called on
+  files that have already been matched by all their subset formats. All files
+  match the `binary` format, meaning all other formats extend `binary`.
+
 * *Metadata*: File metadata describes and identifies the content of a file. A
   metadata **property** consists of an association between an **identifier** and
   a file. A property can be dereferenced to produce a metadata **value**.
@@ -69,12 +75,10 @@ with etiketfs.
   plugin.
 
   Properties originate from a number of sources:
+  * The filesystem provides a handful of universal read-only properties, like
+    added/modified/accessed timestamps.
   * Each format can expose a variable number of intrinsic properties for files
     they identify.
-  * The filesystem implements a special `system` format which present some
-    universal read-only properties. Some are intrinsic, like file size or a
-    content hash, and some are extrinsic, like added/modified/accessed
-    timestamps.
   * The user can define any number of mutable extrinsic attributes.
 
   Metadata values and derived property parameters are typed, using a handful of
@@ -100,3 +104,10 @@ with etiketfs.
 
 * Implement the ability to make intrinsic attributes modifiable through the
   filesystem interface.
+
+* Design "format-unwrapping" to expose metadata from formats that are
+  encapsulated within another. In particular, this would allow compressed files
+  to expose the same metadata as when uncompressed. Perhaps format
+  implementations for compression formats (gzip, bzip2, lzma, etc.) could
+  toggle a `compressed` system metadata property and provide a decompression
+  interface to allow other formats to parse the uncompressed content.

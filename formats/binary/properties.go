@@ -3,14 +3,9 @@ package metadata
 import "io/fs"
 
 /*
-System properties:
-  Intrinsic:
-   - File size in bytes (uint)
-   - Content hash
-  Extrinsic:
-   - Added (datetime)
-   - Modified (datetime)
-   - Accessed (datetime)
+Binary properties:
+- File size (bytes)
+- SHA-256 content hash (binary)
 */
 
 func Size(f fs.File) (uint64, error) {

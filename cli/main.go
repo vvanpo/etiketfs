@@ -1,12 +1,10 @@
 package main
 
 import (
-	"github.com/spf13/cobra"
+	"flag"
 )
 
 func main() {
-	(&cobra.Command{
-		Run: func(cmd *cobra.Command, args []string) {
-		},
-	}).Execute()
+	// setConfig := flag.String("set-config", "", "Sets a configuration value")
+	flag.Parse()
 }

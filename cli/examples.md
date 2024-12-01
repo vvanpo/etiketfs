@@ -2,13 +2,13 @@
 
 Configures the storage location to use the `local` storage driver pointed to the `my-vind` folder in your home directory:
 ```console
-$ vind --set-storage 'local:~/my-vind'
+$ vind --set-config 'storage=local:~/my-vind'
 ```
 Configures a hypothetical `grpc` driver for a remote `vind` gRPC service hosted at `example.com/my-vind`:
 ```console
-$ vind --set-storage 'grpc:example.com/my-vind'
+$ vind --set-config 'storage=grpc:example.com/my-vind'
 ```
-The storage location is always represented by the storage type and address separated by a colon. The `--set-storage` parameter writes to a configuration file in `${XDG_HOME_CONFIG}/vind.toml`.
+The storage location is always represented by the storage type and address separated by a colon. The `--set-config` parameter writes to a configuration file at `${XDG_HOME_CONFIG}/vind.toml`, or to a path in the `VIND_CONFIG` environment variable if present.
 
 Without arguments, the entire catalogue of files for the configured storage is listed in a random order, by default displaying only system metadata and the `binary/size` property. For interactive terminals the output is automatically piped to the default pager.
 ```console
@@ -72,3 +72,12 @@ utf16,json      119
 utf8,markdown   1073
 ```
 System properties are anchored with `/`. Files that don't contain any of the specified properties are elided from the output.
+
+Configures the default displayed properties for when `vind` is called without the `--display` parameter:
+```console
+$ vind --set-config 'display=/formats,/modified,binary/size'
+$ vind
+formats         modified        binary/size
+utf8,ascii      19 Aug 19:51    165
+...
+```

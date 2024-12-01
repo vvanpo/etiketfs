@@ -14,11 +14,11 @@ Without arguments, the entire catalogue of files for the configured storage is l
 ```console
 $ vind
 formats         added           modified        accessed        binary/size
-utf8,ascii      19 Aug 19:51    19 Aug 19:51    30 Nov 17:08    165
+utf8,ascii      19 Aug 19:51    19 Aug 19:51    30 Nov 17:08    165 B
 jpeg            19 Aug 21:24    17:08:27        17:08:27        5.8 MiB
 tiff            30 Nov 19:13    30 Nov 19:13    30 Nov 19:13    17 MiB
 gzip            31 Jul 2018     31 Jul 2018     11 Nov 2023     161 MiB
-utf16,json      19 Aug 14:09    19 Aug 14:09    30 Nov 17:08    238
+utf16,json      19 Aug 14:09    19 Aug 14:09    30 Nov 17:08    238 B
 utf8,markdown   19 Feb 21:07    4 Sep 21:18     17:08:54        1.1 KiB
 ```
 
@@ -78,6 +78,19 @@ Configures the default displayed properties for when `vind` is called without th
 $ vind --set-config 'display=/formats,/modified,binary/size'
 $ vind
 formats         modified        binary/size
-utf8,ascii      19 Aug 19:51    165
+utf8,ascii      19 Aug 19:51    165 B
 ...
 ```
+
+Configures the output format:
+```console
+$ vind --out 'json'
+[
+  {
+    "formats": ["utf8", "ascii"],
+    "modified": "19 Aug 19:51",
+    "binary/size": 165
+  },
+...
+```
+The representation of properties is matched as close as possible within the output format's constraints. In this case, the `bytes` datatype is represented as a number without a unit.

@@ -43,11 +43,20 @@ with etiketfs.
   To prevent collisions when a file is associated with more then one format,
   metadata identifiers provided by formats are namespaced using the format name.
 
-  A format can be a superset of another, as in cases where one format is
+  A format can be super/subset, as in cases where one format is
   backwards-compatible with another (e.g. UTF-8 and ASCII, YAML and JSON).
   Formats that extend another only have their identifying function called on
   files that have already been matched by all their subset formats. All files
   match the `binary` format, meaning all other formats extend `binary`.
+
+  **Format groups** are named groups of format implementations that present one
+  or more (semantically) identical metadata properties. These properties are
+  then instead available under the group namespace. For example, the `jpeg` and
+  `png` formats are members of the `image` format group, and the `resolution`
+  property determined by each format implementation is queried as
+  `image/resolution`. Another example is the various Unicode formats (`utf8`,
+  `utf16`, etc.) all exposing the number of characters in a document as the
+  `unicode/characters` property.
 
 * *Metadata*: File metadata describes and identifies the content of a file. A
   metadata **property** consists of an association between an **identifier** and
@@ -81,8 +90,8 @@ with etiketfs.
     they identify.
   * The user can define any number of mutable extrinsic attributes.
 
-  Metadata values and derived property parameters are typed, using a handful of
-  data types.
+  Metadata values and derived property parameters are typed, determining how
+  they are represented and how they can be operated on.
 
 * *Selection*: An unordered subset of files in the filesystem.
 

@@ -10,51 +10,65 @@ $ vind --set-storage 'grpc:example.com/my-vind'
 ```
 The storage location is always represented by the storage type and address separated by a colon. The `--set-storage` parameter writes to a configuration file in `${XDG_HOME_CONFIG}/vind.toml`.
 
-Without arguments, the entire catalogue of files for the configured storage is listed in a random order, displaying only `system` metadata and the `binary` format metadata. For interactive terminals the output is automatically piped to the default pager.
+Without arguments, the entire catalogue of files for the configured storage is listed in a random order, by default displaying only system metadata and the `binary/size` property. For interactive terminals the output is automatically piped to the default pager.
 ```console
 $ vind
-system/added    system/modified system/accessed system/format   binary/size binary/sha256
-19 Aug 19:51    19 Aug 19:51    30 Nov 17:08    utf8,ascii      165         d2c0d9d3ca...
-19 Aug 21:24    17:08:27        17:08:27        jpeg            5.8 MiB     b96b745460...
-30 Nov 19:13    30 Nov 19:13    30 Nov 19:13    tiff            17 MiB      64f52d7175...
-31 Jul 2018     31 Jul 2018     11 Nov 2023     gzip            161 MiB     744d1d2074...
-19 Aug 14:09    19 Aug 14:09    30 Nov 17:08    utf16,json      238         4ae9812532...
-19 Feb 21:07    4 Sep 21:18     17:08:54        utf8,markdown   1.1 KiB     b2ea0b0731...
+formats         added           modified        accessed        binary/size
+utf8,ascii      19 Aug 19:51    19 Aug 19:51    30 Nov 17:08    165
+jpeg            19 Aug 21:24    17:08:27        17:08:27        5.8 MiB
+tiff            30 Nov 19:13    30 Nov 19:13    30 Nov 19:13    17 MiB
+gzip            31 Jul 2018     31 Jul 2018     11 Nov 2023     161 MiB
+utf16,json      19 Aug 14:09    19 Aug 14:09    30 Nov 17:08    238
+utf8,markdown   19 Feb 21:07    4 Sep 21:18     17:08:54        1.1 KiB
 ```
 
 Overrides the configured storage location:
 ```console
 $ vind --storage 'local:/some/other/storage/path'
-system/added    system/modified ...
-19 Aug 19:51    19 Aug 19:51    ...
+formats  added          ...
+pdf      1 Dec 16:09    ...
 ...
 ```
 
 Restricts output to files matching a format:
 ```console
-$ vind --format 'utf8'
-SIZE    HASH            ...
-165     d2c0d9d3ca...
-238     4ae9812532...
-1.1 KiB b2ea0b0731...
+$ vind --filter 'utf8 in formats'
+formats         added           ...
+utf8,ascii      19 Aug 19:51    ...
+utf8,markdown   19 Feb 21:07    ...
 ```
 
 Restricts output to files matching multiple formats:
 ```console
-$ vind --format 'utf8,markdown'
-SIZE    HASH            ...
-1.1 KiB b2ea0b0731...
+$ vind --filter 'utf8,markdown in formats'
+formats         added           ...
+utf8,markdown   19 Feb 21:07    ...
 ```
 
-Displays all unparameterized metadata from the passed formats (implies `--format`):
+Restricts output to files matching at least one of the specified formats:
 ```console
-$ vind --display 'utf8'
-CHARACTERS
+$ vind --filter 'jpeg|tiff in formats'
+formats  added          ...
+jpeg     19 Aug 21:24   ...
+tiff     30 Nov 19:13   ...
+```
+
+Displays all unparameterized metadata from the passed formats and format groups:
+```console
+$ vind --display 'unicode'
+unicode/characters
 165
-238
+119
 1073
 ```
+Files that do not match any of the specified formats or otherwise do not contain any of their properties are elided from the output.
 
+Displays the specified metadata properties:
 ```console
-$ vind
+$ vind --display '/formats,unicode/characters'
+formats         unicode/characters
+utf8,ascii      165
+utf16,json      119
+utf8,markdown   1073
 ```
+System properties are anchored with `/`. Files that don't contain any of the specified properties are elided from the output.

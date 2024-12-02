@@ -7,7 +7,7 @@ import (
 	pathpkg "path"
 )
 
-const dbFile = "etiketfs.db"
+const dbFile = "vind.db"
 
 // New creates a Storage instance at the passed path.
 func New(path string) error {

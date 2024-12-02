@@ -1,4 +1,4 @@
-# etiketfs
+# vind
 A non-hierarchical, format-aware filesystem
 
 The filesystem exposes a collection of files, which can be queried by content
@@ -16,11 +16,11 @@ can categorize their files with labels, add or update descriptive fields, and
 describe relationships to other files. Users can compose filter and sort
 operations using this metadata to produce file selections for browsing.
 
-Unlike traditional filesystems, etiketfs does not include the concept of
-location—there are no directories and files do not have filenames. This presents
-an acute limitation in that it is not compatible with operating system
-filesystem APIs, meaning applications must be specifically designed to interface
-with etiketfs.
+Unlike traditional filesystems, vind does not include the concept of
+location—there are no directories and files do not have filenames. This
+presents an acute limitation in that it is not compatible with operating system
+filesystem APIs, meaning applications must be specifically designed to
+interface with vind.
 
 ## Glossary
 

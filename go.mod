@@ -1,4 +1,4 @@
-module github.com/vvanpo/etiketfs
+module github.com/vvanpo/vind
 
 go 1.23.3
 

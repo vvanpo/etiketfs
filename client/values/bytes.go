@@ -1,4 +1,4 @@
-package encoding
+package values
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ type BytesFormat struct {
 	Base10 bool
 }
 
-func (f BytesFormat) Render(b types.Bytes) string {
+func (f BytesFormat) Format(b types.Bytes) string {
 	if f.NoPrefix {
 		return fmt.Sprintf("%d B", b)
 	}

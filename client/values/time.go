@@ -1,4 +1,4 @@
-package encoding
+package values
 
 import (
 	"time"
@@ -11,7 +11,7 @@ type TimeFormat struct {
 	Absolute bool // TODO
 }
 
-func (f TimeFormat) Render(t types.Time) string {
+func (f TimeFormat) Format(t types.Time) string {
 	loc := time.UTC
 
 	if f.Location != nil {

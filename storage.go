@@ -1,4 +1,4 @@
-package main
+package vind
 
 import (
 	"database/sql"

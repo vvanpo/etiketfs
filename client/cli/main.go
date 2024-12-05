@@ -7,4 +7,5 @@ import (
 func main() {
 	// setConfig := flag.String("set-config", "", "Sets a configuration value")
 	flag.Parse()
+
 }

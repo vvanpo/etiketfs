@@ -1,4 +1,4 @@
-package local
+package unix
 
 import (
 	"database/sql"
@@ -14,7 +14,6 @@ func New(path string) error {
 	return os.MkdirAll(path, 0755)
 }
 
-// Storage ...
 type Storage struct {
 	path string
 }
@@ -27,7 +26,7 @@ func (s *Storage) DB() (*sql.DB, error) {
 	return sql.Open("sqlite3", "file:"+s.absPath(dbFile)+"?_fk=true")
 }
 
-func (s *Storage) Open(id string) (*os.File, error) {
+func (s *Storage) Open(id string) (io.ReadSeekCloser, error) {
 	return os.Open(s.absPath(id))
 }
 

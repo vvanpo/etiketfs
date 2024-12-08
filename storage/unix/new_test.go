@@ -1,4 +1,4 @@
-package local
+package unix
 
 import (
 	"os"
@@ -9,7 +9,7 @@ import (
 )
 
 func mkdirTemp() string {
-	tmpdir, _ := os.MkdirTemp("", "local-storage_test-")
+	tmpdir, _ := os.MkdirTemp("", "vind-storage-unix_test-")
 
 	return tmpdir
 }

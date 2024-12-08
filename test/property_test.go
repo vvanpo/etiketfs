@@ -15,7 +15,8 @@ func TestProperty(t *testing.T) {
 	defer os.RemoveAll(dir)
 
 	assert.Nil(t, unix.New(dir))
-	fs := vind.Load(unix.Load(dir))
+	fs, err := vind.Load(unix.Load(dir))
+	assert.Nil(t, err)
 	content := strings.NewReader("foo bar baz ほげ ふが")
 	assert.Nil(t, fs.Add(content))
 

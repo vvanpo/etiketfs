@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"regexp"
 	"unicode"
 	"unicode/utf8"
 )
@@ -34,4 +35,10 @@ func Characters(content io.Reader) (uint64, error) {
 	}
 
 	return count, nil
+}
+
+func Contains(content io.Reader, match string) (bool, error) {
+	r := bufio.NewReader(content)
+
+	return regexp.MatchReader(match, r)
 }

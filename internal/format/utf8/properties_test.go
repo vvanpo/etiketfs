@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"strings"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCharacters(t *testing.T) {
@@ -28,4 +30,22 @@ func TestCharactersInvalidUTF8(t *testing.T) {
 	} else if err.Error() != "Invalid UTF-8" {
 		t.Fatalf("Unexpected error: %v", err)
 	}
+}
+
+func TestContains(t *testing.T) {
+	r := strings.NewReader("foo barbaz")
+
+	c, err := Contains(r, "arb")
+
+	assert.True(t, c)
+	assert.Nil(t, err)
+}
+
+func TestContainsFalse(t *testing.T) {
+	r := strings.NewReader("foo barbaz")
+
+	c, err := Contains(r, "qux")
+
+	assert.False(t, c)
+	assert.Nil(t, err)
 }

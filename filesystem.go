@@ -1,16 +1,29 @@
 package vind
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/google/uuid"
+	"github.com/vvanpo/vind/internal/format/binary"
+	"github.com/vvanpo/vind/internal/format/utf8"
 	"github.com/vvanpo/vind/internal/state"
+	"github.com/vvanpo/vind/metadata"
 )
 
 // Filesystem ...
 type Filesystem struct {
-	storage Storage
-	state   state.State
+	storage  Storage
+	state    state.State
+	registry metadata.Registry
+}
+
+func initRegistry() metadata.Registry {
+	r := metadata.NewRegistry()
+	metadata.SetEval(r, "binary", "size", binary.Size)
+	metadata.SetEval(r, "unicode", "characters", utf8.Characters)
+
+	return r
 }
 
 func Load(so Storage) (Filesystem, error) {
@@ -26,7 +39,7 @@ func Load(so Storage) (Filesystem, error) {
 		return Filesystem{}, err
 	}
 
-	return Filesystem{so, st}, nil
+	return Filesystem{so, st, initRegistry()}, nil
 }
 
 func (fs Filesystem) Add(content io.Reader) error {
@@ -66,16 +79,26 @@ func (fs Filesystem) Select(filter Filter, sort Sort) (<-chan File, error) {
 }
 
 // Property ...
-func (fs Filesystem) Property(file File, group, name string, params ...any) (any, error) {
+func Property[V metadata.Value](fs Filesystem, file File, group, name string, params ...any) (*V, error) {
 	content, err := fs.storage.Open(file.id.String())
 
 	if err != nil {
 		return nil, err
 	}
 
-	// lookup metadata source
+	eval := metadata.Lookup[V](fs.registry, group, name)
 
-	return nil, nil
+	if eval == nil {
+		return nil, fmt.Errorf("vind: invalid property (%s/%s)", group, name)
+	}
+
+	val, err := eval(content)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &val, nil
 }
 
 type Filter struct{}

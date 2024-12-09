@@ -1,6 +1,10 @@
-package metadata
+package binary
 
-import "io"
+import (
+	"io"
+
+	"github.com/vvanpo/vind/metadata"
+)
 
 /*
 Binary properties:
@@ -8,8 +12,8 @@ Binary properties:
 - SHA-256 content hash (binary)
 */
 
-func Size(content io.Seeker) (uint64, error) {
+func Size(content io.ReadSeeker) (metadata.Bytes, error) {
 	size, err := content.Seek(0, io.SeekEnd)
 
-	return uint64(size), err
+	return metadata.Bytes(size), err
 }

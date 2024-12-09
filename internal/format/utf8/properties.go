@@ -7,11 +7,13 @@ import (
 	"regexp"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/vvanpo/vind/metadata"
 )
 
-func Characters(content io.Reader) (uint64, error) {
+func Characters(content io.ReadSeeker) (metadata.Integer, error) {
 	buffered := bufio.NewReader(content)
-	var count uint64
+	var count metadata.Integer
 
 	for {
 		r, n, err := buffered.ReadRune()

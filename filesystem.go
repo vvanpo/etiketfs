@@ -3,6 +3,7 @@ package vind
 import (
 	"io"
 
+	"github.com/google/uuid"
 	"github.com/vvanpo/vind/internal/state"
 )
 
@@ -23,7 +24,21 @@ func Load(s Storage) (Filesystem, error) {
 }
 
 func (fs Filesystem) Add(content io.Reader) error {
-	return nil
+	id := uuid.New()
+
+	if err := fs.storage.Add(id.String(), content); err != nil {
+		return err
+	}
+
+	db, err := fs.storage.DB()
+
+	if err != nil {
+		fs.storage.Delete(id.String())
+
+		return err
+	}
+
+	return state.AddFile(db, id)
 }
 
 func (fs Filesystem) Select(filter Filter, sort Sort) (<-chan File, error) {

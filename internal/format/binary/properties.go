@@ -1,6 +1,6 @@
 package metadata
 
-import "io/fs"
+import "io"
 
 /*
 Binary properties:
@@ -8,18 +8,8 @@ Binary properties:
 - SHA-256 content hash (binary)
 */
 
-func Size(f fs.File) (uint64, error) {
-	fi, err := f.Stat()
+func Size(content io.Seeker) (uint64, error) {
+	size, err := content.Seek(0, io.SeekEnd)
 
-	if err != nil {
-		return 0, err
-	}
-
-	size := fi.Size()
-
-	if size < 0 {
-		return 0, nil
-	}
-
-	return uint64(size), nil
+	return uint64(size), err
 }

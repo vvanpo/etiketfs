@@ -10,17 +10,23 @@ import (
 // Filesystem ...
 type Filesystem struct {
 	storage Storage
+	state   state.State
 }
 
-func Load(s Storage) (Filesystem, error) {
-	if db, err := s.DB(); err != nil {
+func Load(so Storage) (Filesystem, error) {
+	db, err := so.DB()
+
+	if err != nil {
 		return Filesystem{}, err
-	} else {
-		state.Init(db)
-		db.Close()
 	}
 
-	return Filesystem{s}, nil
+	st, err := state.Init(db)
+
+	if err != nil {
+		return Filesystem{}, err
+	}
+
+	return Filesystem{so, st}, nil
 }
 
 func (fs Filesystem) Add(content io.Reader) error {
@@ -30,32 +36,52 @@ func (fs Filesystem) Add(content io.Reader) error {
 		return err
 	}
 
-	db, err := fs.storage.DB()
-
-	if err != nil {
+	if err := fs.state.AddFile(id); err != nil {
 		fs.storage.Delete(id.String())
 
 		return err
 	}
 
-	return state.AddFile(db, id)
+	return nil
 }
 
 func (fs Filesystem) Select(filter Filter, sort Sort) (<-chan File, error) {
+	ids, err := fs.state.FileIds()
+
+	if err != nil {
+		return nil, err
+	}
+
 	out := make(chan File)
 
-	close(out)
+	go func() {
+		for _, id := range ids {
+			out <- File{id}
+		}
+
+		close(out)
+	}()
 
 	return out, nil
+}
+
+// Property ...
+func (fs Filesystem) Property(file File, group, name string, params ...any) (any, error) {
+	content, err := fs.storage.Open(file.id.String())
+
+	if err != nil {
+		return nil, err
+	}
+
+	// lookup metadata source
+
+	return nil, nil
 }
 
 type Filter struct{}
 
 type Sort struct{}
 
-type File struct{}
-
-// Property ...
-func (f File) Property(group, name string, params ...any) (any, error) {
-	return nil, nil
+type File struct {
+	id uuid.UUID
 }

@@ -2,13 +2,11 @@ package state
 
 import (
 	"database/sql"
-	"time"
 
-	"github.com/google/uuid"
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func Init(db *sql.DB) error {
+func Init(db *sql.DB) (State, error) {
 	_, err := db.Exec(`
 		CREATE TABLE IF NOT EXISTS file (
 			id TEXT PRIMARY KEY NOT NULL,
@@ -16,12 +14,9 @@ func Init(db *sql.DB) error {
 		);
 	`)
 
-	return err
-}
+	if err == nil {
+		return State{db}, nil
+	}
 
-func AddFile(db *sql.DB, id uuid.UUID) error {
-	ts := time.Now().Unix()
-	_, err := db.Exec(`INSERT INTO file VALUES (?, ?);`, id, ts)
-
-	return err
+	return State{}, err
 }

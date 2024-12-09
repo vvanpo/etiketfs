@@ -24,9 +24,9 @@ func (d Driver) List(f vind.Filter, s vind.Sort, ids []driver.Identifier) (<-cha
 
 			for i, id := range ids {
 				if id.Parameter != nil {
-					props[i], _ = f.Property(id.Group, id.Name, id.Parameter)
+					props[i], _ = d.fs.Property(f, id.Group, id.Name, id.Parameter)
 				} else {
-					props[i], _ = f.Property(id.Group, id.Name)
+					props[i], _ = d.fs.Property(f, id.Group, id.Name)
 				}
 			}
 		}

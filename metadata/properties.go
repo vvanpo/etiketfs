@@ -3,58 +3,34 @@ package metadata
 import "io"
 
 type Registry struct {
-	bytes     registry[Bytes]
-	integer   registry[Integer]
-	stringset registry[Set[string]]
-	time      registry[Time]
+	properties map[string]map[string]Evaluator[any]
 }
 
 func NewRegistry() Registry {
-	return Registry{
-		bytes:     registry[Bytes]{},
-		integer:   registry[Integer]{},
-		stringset: registry[Set[string]]{},
-		time:      registry[Time]{},
-	}
+	return Registry{map[string]map[string]Evaluator[any]{}}
 }
 
-func SetEval[V Value](rs Registry, group, name string, eval Evaluator[V]) {
-	r := get[V](rs).(registry[V])
-
-	if r[group] == nil {
-		r[group] = map[string]Evaluator[V]{}
+func SetEval[V Value](r Registry, group, name string, eval Evaluator[V]) {
+	if r.properties[group] == nil {
+		r.properties[group] = map[string]Evaluator[any]{}
 	}
+	e := func(c io.ReadSeeker) (any, error) { return eval(c) }
 
-	r[group][name] = eval
+	r.properties[group][name] = e
 }
 
-func Lookup[V Value](rs Registry, group, name string) Evaluator[V] {
-	r := get[V](rs).(registry[V])
-
-	if r[group] == nil {
+func Lookup[V Value](r Registry, group, name string) Evaluator[V] {
+	if r.properties[group] == nil {
 		return nil
 	}
 
-	return r[group][name]
-}
+	e := r.properties[group][name]
 
-func get[V Value](rs Registry) any {
-	var val V
+	return func(c io.ReadSeeker) (V, error) {
+		v, err := e(c)
 
-	switch any(val).(type) {
-	case Bytes:
-		return rs.bytes
-	case Integer:
-		return rs.integer
-	case Set[string]:
-		return rs.stringset
-	case Time:
-		return rs.time
+		return v.(V), err
 	}
-
-	return nil
 }
 
-type registry[V Value] map[string]map[string]Evaluator[V]
-
-type Evaluator[V Value] func(io.ReadSeeker) (V, error)
+type Evaluator[V any] func(io.ReadSeeker) (V, error)

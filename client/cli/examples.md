@@ -30,6 +30,26 @@ pdf      1 Dec 16:09    ...
 ...
 ```
 
+Enumerates the list of available properties and their types:
+```console
+$ vind --properties
+group       name        value type              parameter type      description
+            added       timestamp                                   When the file was first added to the filesystem.
+            modified    timestamp                                   When the file content was last modified.
+            accessed    timestamp                                   When the file was last opened.
+            format                                                  The format that best matches the file content.
+            formats     set of text                                 All formats identified that can describe the file.
+binary      size        bytes                                       The size of the file content.
+publication title       text
+publication authors     list of text                                The authors of the publication, sometimes ordered by relative contribution.
+publication published   date
+publication publisher   text
+text        characters  non-negative integer
+text        matches     boolean                 regular expression
+text        words       non-negative integer
+unicode     characters  non-negative integer
+```
+
 Restricts output to files matching a format:
 ```console
 $ vind --filter 'utf8 in formats'

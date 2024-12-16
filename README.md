@@ -120,3 +120,16 @@ interface with vind.
   implementations for compression formats (gzip, bzip2, lzma, etc.) could
   toggle a `compressed` system metadata property and provide a decompression
   interface to allow other formats to parse the uncompressed content.
+
+* Figure how to report just one "best-matched" format. For files that match
+  only a set of compatible formats, this is quite simple. For example, ASCII is
+  a more constrained format than UTF-8 (any file that matches the ASCII format
+  will also match UTF-8), so ASCII is a better match to report as the file's
+  format than UTF-8. Same for JSON and YAML; JSON is more constrained so it
+  should be reported as the best-matched format. But many files might match
+  multiple hierarchies of formats; many textual formats can be encoded using
+  any Uncode encoding, for example. An XML document could be encoded as UTF-8,
+  or UTF-16, or any other; thus it cannot be said that XML is an extension of
+  any of these encodings individually, only that XML extends the set of all
+  unicode encodings as a whole. So we would have to be able to use format
+  groups in our establishment of format hierarchies.

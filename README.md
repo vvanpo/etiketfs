@@ -128,8 +128,29 @@ interface with vind.
   format than UTF-8. Same for JSON and YAML; JSON is more constrained so it
   should be reported as the best-matched format. But many files might match
   multiple hierarchies of formats; many textual formats can be encoded using
-  any Uncode encoding, for example. An XML document could be encoded as UTF-8,
+  any Unicode encoding, for example. An XML document could be encoded as UTF-8,
   or UTF-16, or any other; thus it cannot be said that XML is an extension of
   any of these encodings individually, only that XML extends the set of all
   unicode encodings as a whole. So we would have to be able to use format
   groups in our establishment of format hierarchies.
+
+* Access control and federation: see [Upspin](https://upspin.io/) for ideas
+  about federation. A client could parallelize a query to multiple servers and
+  merge the results (sorting and limiting could get tricky). Owner/group
+  information could be encoded as attributes and owners could define
+  attribute-based policies for access control. Instead of sharing a folder to
+  define a workspace for multiple users, a specific tag attribute could be used
+  to grant access (and certain users might only have permission to create files
+  with that particular tag).
+
+* Caching and file synchronization: clients of remote servers should cache file
+  contents of opened files and metadata from previous queries. When offline,
+  the client UI should display a notice indicating the possibility of partial
+  results, and disallow opening uncached files. Since file-locking across the
+  network of a shared filesystem sounds like a nightmare, there needs to be
+  some mechanism to alert the user to conflicts when they're detected (which
+  could be long after a user's session has ended). Since some formats are more
+  amenable to merging conflicting changes then other (source code: easy; JPEG:
+  impossible), it might make sense to give formats the option to implement
+  automatic merging when possible (and give a hand in manual merge resolution à
+  la `git`).

@@ -168,3 +168,8 @@ interface with vind.
   precomputed (provided the entire filesystem contents are run through during
   initialization), but otherwise would be practically unusable for queries that
   need to read from every file.
+
+* Optional properties as extensions. For example, the text format group could
+  present a "language" property that attempts to return the best-matched
+  language for the text content, perhaps by hitting the Google Translate API
+  for language detection (or the API could be configurable).

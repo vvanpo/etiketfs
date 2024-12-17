@@ -40,14 +40,16 @@ group       name        value type              parameter type      description
             format                                                  The format that best matches the file content.
             formats     set of text                                 All formats identified that can describe the file.
 binary      size        bytes                                       The size of the file content.
+image       resolution  pixel resolution                            The width and height of the image in pixel count.
 publication title       text
 publication authors     list of text                                The authors of the publication, sometimes ordered by relative contribution.
 publication published   date
 publication publisher   text
-text        characters  non-negative integer
-text        matches     boolean                 regular expression
-text        words       non-negative integer
-unicode     characters  non-negative integer
+text        characters  non-negative integer                        The number of recognizable characters making up the textual content.
+text        matches     boolean                 language, text      Whether the content contains an exact match of the passed text, according to the given language rules.
+text        matches     boolean                 regular expression  Whether the content matches the given regular expression.
+text        words       non-negative integer                        The word count.
+unicode     code points non-negative integer                        The number of Unicode code points present.
 ```
 
 Restricts output to files matching a format:

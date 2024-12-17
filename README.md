@@ -154,3 +154,17 @@ interface with vind.
   impossible), it might make sense to give formats the option to implement
   automatic merging when possible (and give a hand in manual merge resolution à
   la `git`).
+
+* End-to-end encryption. This one is impossible I think, since the server must
+  be able to read the file contents to extract metadata, and to cache said
+  metadata. Users should be able to manage their own keys if they want, but it
+  shouldn't be the default since having no recovery after lost keys would be
+  disastrous for most users. Multi-user file access makes the whole story even
+  more complicated. I suppose a middle-ground is where users that want true
+  end-to-end encryption concede to running all queries locally, whereas others
+  can use a server that handles keys ephemerally (per query?). Running queries
+  locally would be acceptable when the entire filesystem can fit in the local
+  cache, or if only unparameterized metadata is used in queries which can be
+  precomputed (provided the entire filesystem contents are run through during
+  initialization), but otherwise would be practically unusable for queries that
+  need to read from every file.
